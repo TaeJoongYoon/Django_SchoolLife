@@ -1,0 +1,116 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SchoolLife</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href='{% static "home/vendor/bootstrap/css/bootstrap.min.css" %}' rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href='{% static "home/vendor/font-awesome/css/font-awesome.min.css" %}' rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href='{% static "home/css/clean-blog.min.css" %}' rel="stylesheet">
+    <link href='{% static "home/css/style.css" %}' rel="stylesheet">
+
+  </head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-light bg-light static-top">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'home:main' %}">SchoolLife</a>
+        <div calss="btn-group">
+          {% if user.is_authenticated%}
+          <a class="btn btn-primary" href="{% url 'home:marketPost' %}">Post</a>
+          <a class="btn btn-primary" href="{% url 'home:signout' %}">Logout</a>
+          {% else %}
+          <a class="btn btn-primary" href="{% url 'home:signin' %}">Sign In</a>
+          <a class="btn btn-primary" href="{% url 'home:register' %}">Sign Up</a>
+          {% endif %}
+      	</div>
+  	</div>
+    </nav>
+
+    <div class="container col-lg-8">
+        {% for market in markets %}
+          <!-- Title -->
+          <h1 class="mt-4">{{market.title}}</h1>
+
+          <!-- Author -->
+          <p class="lead">
+            by {{market.author}}
+          </p>
+
+          <hr>
+
+          <!-- Date/Time -->
+          <p>Posted on {{market.created_at}}</p>
+
+          <hr>
+
+          <!-- Image -->
+          <img class="img-fluid rounded" src="{{market.photo.url}}" alt="">
+
+          <hr>
+
+          <!-- Post Content -->
+          {{market.content}}
+
+          <hr>
+
+          <!-- Comments Form -->
+        {% if user.is_authenticated%}
+          <div class="card my-4">
+            <h5 class="card-header">Leave a Comment:</h5>
+            <div class="card-body">
+              <form method="post" action="{% url 'home:marketComment' %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="post_id" value="{{market.id}}" />
+                <div class="form-group">
+                  <textarea class="form-control" rows="3" name="content"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form>
+            </div>
+          </div>
+        {%else%}
+            <div class="card my-4">
+            <h5 class="card-header">Leave a Comment:</h5>
+            <div class="card-body">
+              <form method="post" action="{% url 'home:marketComment' %}">
+                  {% csrf_token %}
+                <div class="form-group">
+                  <textarea class="form-control" rows="3" name="content" placeholder="로그인 시 가능합니다.."></textarea>
+                </div>
+              </form>
+            </div>
+          </div>
+        {%endif%}
+
+          <!-- Single Comment -->
+        {% for comment in comments %}
+          <div class="media mb-4">
+            <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+            <div class="media-body">
+              <h5 class="mt-0">{{comment.author}}</h5>
+              {{comment.content}}
+            </div>
+          </div>
+        {%endfor%}
+
+        {%endfor%}
+        </div>
+
+</body>
+</html>
