@@ -1,4 +1,4 @@
-# Django_SchoolLife
+# SchoolLife
 This project is about Python Django.
 
 Sejong Univ. Database Project
